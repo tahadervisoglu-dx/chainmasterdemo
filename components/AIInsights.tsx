@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { getSupplyChainInsights } from '../services/gemini';
+import { getSupplyChainInsights } from '../services/openai';
 import { Translations, Language } from '../types';
 
 interface AIInsightsProps {
