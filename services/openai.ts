@@ -1,45 +1,25 @@
 
-import OpenAI from 'openai';
-
-// getSupplyChainInsights uses the OpenAI API to generate analysis of supply chain data.
+// getSupplyChainInsights now uses Vercel serverless function for secure API calls
 export async function getSupplyChainInsights(context: string, data: any, lang: string) {
-  // Always obtain the API key exclusively from process.env.API_KEY.
-  if (!process.env.API_KEY) return "API Key not configured.";
-
-  // Initialize the OpenAI client
-  const openai = new OpenAI({ 
-    apiKey: process.env.API_KEY,
-    dangerouslyAllowBrowser: true // Frontend kullanımı için gerekli
-  });
-  
-  const prompt = `
-    Analyze the following supply chain data for the section: ${context}.
-    Data: ${JSON.stringify(data)}
-    
-    Please provide a concise analysis in ${lang} including:
-    1. Key Trends observed.
-    2. Potential risks or bottlenecks.
-    3. Actionable recommendations.
-    
-    Keep the tone professional and expert-level.
-  `;
-
   try {
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini', // Uygun fiyatlı ve güçlü model
-      messages: [
-        {
-          role: 'user',
-          content: prompt
-        }
-      ],
-      max_tokens: 1000,
-      temperature: 0.7
+    const response = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ context, data, lang })
     });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result.result || "No insights generated.";
     
-    return response.choices[0]?.message?.content || "No insights generated.";
   } catch (error) {
-    console.error("OpenAI Error:", error);
+    console.error("API Error:", error);
     return "Error generating insights. Please try again later.";
   }
 }

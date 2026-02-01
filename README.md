@@ -12,9 +12,17 @@ View your app in AI Studio: https://ai.studio/apps/drive/1yR3mIGaa8tD7oL7oe3py4Q
 
 **Prerequisites:**  Node.js
 
-
 1. Install dependencies:
    `npm install`
 2. Set the `OPENAI_API_KEY` in [.env.local](.env.local) to your OpenAI API key
 3. Run the app:
    `npm run dev`
+
+## Deploy to Vercel
+
+1. Push to GitHub
+2. Import project to Vercel
+3. Add `OPENAI_API_KEY` environment variable in Vercel dashboard
+4. Deploy automatically
+
+**Note:** The app uses Vercel Serverless Functions for secure API key handling.
